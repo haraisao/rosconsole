@@ -33,6 +33,7 @@
 #define ROSCONSOLE_ROSCONSOLE_H
 
 #include "console_backend.h"
+#include "console_print.h"
 
 #include <cstdio>
 #include <sstream>

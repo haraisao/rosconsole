@@ -27,81 +27,20 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "ros/console.h"
-#define ROSCONSOLE_CONSOLE_IMPL_EXPORTS
-#include "ros/console_impl.h"
+#ifndef ROSCONSOLE_CONSOLE_PRINT_H
+#define ROSCONSOLE_CONSOLE_PRINT_H
 
-namespace ros
-{
-namespace console
-{
-namespace impl
-{
+#include <ros/macros.h>
 
-LogAppender* rosconsole_print_appender = 0;
+// Import/export for windows dll's and visibility for gcc shared libraries.
+#ifdef ROS_BUILD_SHARED_LIBS // ros is being built around shared libraries
+  #ifdef rosconsole_print_EXPORTS // we are building a shared lib/dll
+    #define ROSCONSOLE_PRINT_DECL ROS_HELPER_EXPORT
+  #else // we are using shared lib/dll
+    #define ROSCONSOLE_PRINT_DECL ROS_HELPER_IMPORT
+  #endif
+#else // ros is being built around static libraries
+  #define ROSCONSOLE_PRINT_DECL
+#endif
 
-ROSCONSOLE_PRINT_DECL
-void initialize()
-{}
-
-ROSCONSOLE_PRINT_DECL
-void print(void* handle, ::ros::console::Level level, const char* str, const char* file, const char* function, int line)
-{
-  ::ros::console::backend::print(0, level, str, file, function, line);
-  if(rosconsole_print_appender)
-  {
-    rosconsole_print_appender->log(level, str, file, function, line);
-  }
-}
-
-ROSCONSOLE_PRINT_DECL
-bool isEnabledFor(void* handle, ::ros::console::Level level)
-{
-  return level != ::ros::console::levels::Debug;
-}
-
-ROSCONSOLE_PRINT_DECL
-void* getHandle(const std::string& name)
-{
-  return 0;
-}
-
-ROSCONSOLE_PRINT_DECL
-std::string getName(void* handle)
-{
-  return "";
-}
-
-ROSCONSOLE_PRINT_DECL
-void register_appender(LogAppender* appender)
-{
-  rosconsole_print_appender = appender;
-}
-
-ROSCONSOLE_PRINT_DECL
-void deregister_appender(LogAppender* appender){
-  if(rosconsole_print_appender == appender)
-  {
-    rosconsole_print_appender = 0;
-  }
-}
-
-ROSCONSOLE_PRINT_DECL
-void shutdown()
-{}
-
-ROSCONSOLE_PRINT_DECL
-bool get_loggers(std::map<std::string, levels::Level>& loggers)
-{
-  return true;
-}
-
-ROSCONSOLE_PRINT_DECL
-bool set_logger_level(const std::string& name, levels::Level level)
-{
-  return false;
-}
-
-} // namespace impl
-} // namespace console
-} // namespace ros
+#endif // ROSCONSOLE_CONSOLE_PRINT_H
