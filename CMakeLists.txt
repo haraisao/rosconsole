@@ -20,7 +20,7 @@ if(ROSCONSOLE_BACKEND STREQUAL "" OR ROSCONSOLE_BACKEND STREQUAL "log4cxx")
     find_library(LOG4CXX_LIBRARIES log4cxx)
   endif()
   if(LOG4CXX_LIBRARIES)
-    list(APPEND rosconsole_backend_INCLUDE_DIRS ${LOG4CXX_INCLUDE_DIRS})
+    list(APPEND rosconsole_backend_INCLUDE_DIRS ${LOG4CXX_INCLUDE_DIR})
     list(APPEND rosconsole_backend_LIBRARIES rosconsole_log4cxx rosconsole_backend_interface ${LOG4CXX_LIBRARIES})
     set(ROSCONSOLE_BACKEND "log4cxx")
   elseif(ROSCONSOLE_BACKEND STREQUAL "log4cxx")
@@ -106,6 +106,13 @@ install(FILES config/rosconsole.config
 install(DIRECTORY include/
   DESTINATION ${CATKIN_GLOBAL_INCLUDE_DESTINATION}
   FILES_MATCHING PATTERN "*.h")
+
+if(WIN32)
+  if(ROSCONSOLE_BACKEND STREQUAL "log4cxx")
+    install(FILES ${LOG4CXX_RUNTIME_LIBS}
+    DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+  endif()
+endif()
 
 if(CATKIN_ENABLE_TESTING)
   catkin_add_gtest(${PROJECT_NAME}-utest test/utest.cpp)
